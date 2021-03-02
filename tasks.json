@@ -1,0 +1,98 @@
+[
+  {
+    "_id": "1",
+    "text": "Project A",
+    "start_date": "2018-06-10 00:00:00",
+    "duration":5,
+    "progress":24,
+    "parent":0,
+    "opened":1,
+    "type":"project",
+    "details":"Weekly meeting required\nRoom 508",
+    "position":0
+  },
+  {
+    "_id": "1.1",
+    "text": "Design",
+    "start_date": "2018-06-10 00:00:00",
+    "duration":1,
+    "progress":85,
+    "parent":"1",
+    "position":0
+  },
+  {
+    "_id": "1.2",
+    "text": "Approval",
+    "start_date": "2018-06-11 00:00:00",
+    "duration":0,
+    "parent":"1",
+    "type":"milestone",
+    "position":1
+  },
+  {
+    "_id": "1.3",
+    "text": "Coding",
+    "start_date": "2018-06-10 00:00:00",
+    "duration":3,
+    "progress":20,
+    "parent":"1",
+    "details":"Contact Rob for details",
+    "position":2
+  },
+  {
+    "_id": "1.4",
+    "text": "Testing",
+    "start_date": "2018-06-13 00:00:00",
+    "duration":1,
+    "progress":0,
+    "parent":"1",
+    "details":"Desktop, mobile",
+    "position":3
+  },
+  {
+    "_id": "1.5",
+    "text": "Fixing",
+    "start_date": "2018-06-14 00:00:00",
+    "duration":1,
+    "progress":0,
+    "parent":"1",
+    "position":4
+  },
+  {
+    "_id": "1.6",
+    "text": "Deploy",
+    "start_date": "2018-06-15 00:00:00",
+    "duration":0,
+    "parent":"1",
+    "type":"milestone",
+    "position":5
+  },
+  {
+    "_id": "2",
+    "text": "Project B",
+    "start_date": "2018-06-10 00:00:00",
+    "duration":3,
+    "progress":0,
+    "parent":0,
+    "type":"project",
+    "position":1
+  },
+  {
+    "_id": "2.1",
+    "text": "Task 1",
+    "start_date": "2018-06-10 00:00:00",
+    "duration":2,
+    "progress":0,
+    "parent":"2",
+    "position":0
+  },
+  {
+    "_id": "2.2",
+    "text": "Task 2",
+    "start_date": "2018-06-11 00:00:00",
+    "duration":2,
+    "progress":0,
+    "parent":"2",
+    "position":1
+  }
+]

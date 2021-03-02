@@ -1,0 +1,10 @@
+[
+  {"_id": "1", "name": "John", "category_id":"1", "avatar": "https://docs.webix.com/usermanager-backend/users/101/avatar/092352563.jpg"},
+  {"_id": "2", "name": "Mike", "category_id":"2"},
+  {"_id": "3", "name": "Anna Meyer", "category_id":"2", "avatar": "https://docs.webix.com/usermanager-backend/users/98/avatar/909471384.jpg"},
+  {"_id": "4", "name": "Alexander Thompson", "category_id":"2", "avatar": "https://docs.webix.com/usermanager-backend/users/102/avatar/898151818.jpg"},
+  {"_id": "5", "name": "Mark", "category_id":"1"},
+  {"_id": "6", "name": "Leonard", "category_id":"1"},
+  {"_id": "7", "name": "Alina", "category_id":"3"},
+  {"_id": "8", "name": "Stephan", "category_id":"3"}
+]
