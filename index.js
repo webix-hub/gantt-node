@@ -79,6 +79,37 @@ function safeAssignmentAttributes(update, obj){
 	return update;
 }
 
+async function splitTask(req){
+	const parent = req.params.id;
+	await tasks.update(
+		{ _id: parent },
+		{ $set: { type:"split" }, $max:{ duration: 1, progress: 0 } },
+		{}
+	);
+
+	let sibling = 0;
+	const kids = await tasks.find({ parent });
+	if (!kids.length) {
+		const data = await tasks.find({ _id: parent });
+		const origin = data[0];
+		const added = await tasks.insert({
+			type: "task", 
+			parent,
+			text: origin.text,
+			start_date: origin.start_date,
+			duration: origin.duration || 1,
+			progress: origin.progress || 0,
+			opened: origin.opened,
+			details: origin.details
+		});
+		sibling = fixID(added).id;
+	}
+
+	const added = await tasks.insert(safeTaskAttributes({}, req.body));
+
+	return { id: fixID(added).id, sibling };
+}
+
 async function deleteTask(id){
 	const data = await tasks.find({ parent:id });
 	await Promise.all(data.map(a => deleteTask(a._id)));
@@ -119,11 +150,22 @@ app.put("/tasks/:id", async (req, res, next) => {
 	}
 });
 
+app.put("/tasks/:id/split", async (req, res, next) => {
+	try {
+		const { sibling, id } = await splitTask(req);
+		const response = { id };
+		if (sibling) response.sibling = sibling;
+		res.send(response);
+	} catch (err) {
+		next(err);
+	}
+});
+
 app.delete("/tasks/:id", async (req, res, next) => {
 	try {
 		await deleteTask(req.params.id);
 		res.send({});
-	} catch(e){
+	} catch(err){
 		next(err);
 	}	
 });
@@ -132,9 +174,9 @@ app.post("/tasks", async (req, res, next) => {
 	try {
 		const data = await tasks.insert(safeTaskAttributes({
 			progress:0, parent:0, text:"New Task"
-		},req.body));
+		}, req.body));
 		res.send({ id: fixID(data).id });
-	} catch(e){
+	} catch(err){
 		next(err);
 	}
 });
