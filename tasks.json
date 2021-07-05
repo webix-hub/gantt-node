@@ -5,7 +5,7 @@
     "start_date": "2018-06-10 00:00:00",
     "duration":5,
     "progress":24,
-    "parent":0,
+    "parent":"0",
     "opened":1,
     "type":"project",
     "details":"Weekly meeting required\nRoom 508",
@@ -73,7 +73,7 @@
     "start_date": "2018-06-10 00:00:00",
     "duration":3,
     "progress":0,
-    "parent":0,
+    "parent":"0",
     "type":"project",
     "position":1
   },
@@ -102,7 +102,7 @@
     "start_date":"2018-06-10 00:00:00",
     "duration":3,
     "progress":0,
-    "parent":0,
+    "parent":"0",
     "position":2
   },
   {

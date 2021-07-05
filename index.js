@@ -128,9 +128,61 @@ async function deleteTask(id){
 	await tasks.remove({ _id: id });
 }
 
+async function getPosition(parent){
+	const data = await tasks.find({ parent }).sort({ position: -1 }).limit(1);
+	return data[0].position + 1;
+}
+
+async function setPosition(id, mode, parent){
+	if (mode === "last") {
+		const relatedPosition = await getPosition(parent);
+		await tasks.update({ _id: id }, { position: relatedPosition });
+	} else if (mode === "first" || mode === "") {
+		await tasks.update({ $and:[ { parent: parent }, { _id: { $ne: id } } ]}, { $set:{ position: relatedPosition } });
+	} else throw("not supported position mode");
+}
+
+async function sendMoveQuery(id, mode, target, parent){
+	const data = await tasks.find({ _id: id });
+	const basePosition = data[0].position;
+	const baseParent = data[0].parent;
+
+	let relatedParent = parent, relatedPosition = 0;
+	if (relatedParent == -1) relatedParent = baseParent;
+
+	if (mode === "before" || mode === "after") {
+		const tdata = await tasks.find({ _id: target });
+		relatedParent = tdata[0].parent;
+		relatedPosition = tdata[0].position;
+
+		if (mode === "after") relatedPosition += 1;
+	} else if (mode === "last") {
+		relatedPosition = await getPosition(parent);
+	}
+
+	// source item removing may affect target index
+	if (relatedParent == baseParent && (mode === "last" || basePosition < relatedPosition)) {
+		relatedPosition -= 1
+	}
+
+	// already in place
+	if (relatedParent == baseParent && relatedPosition == basePosition) {
+		return;
+	}
+
+	// removing from source order
+	await tasks.update({ $and:[ { position: { $gt: basePosition } }, { parent: baseParent } ] }, { $inc: { position: -1 } }, { multi: true } );
+
+	// correct target order
+	await tasks.update({ $and:[ { position: { $gte: relatedPosition } }, { parent: relatedParent } ] }, { $inc: { position: 1 } }, { multi: true });
+
+	// adding at target position
+	await tasks.update({ _id: id }, { $set: { position: relatedPosition, parent: relatedParent } });
+}
+
 app.get("/tasks", async (req, res, next) => {
 	try {
-		const data = await tasks.find({});
+		const data = await tasks.find({}).sort({ position: 1, parent: 1 });
 		res.send(data.map(fixID));
 	} catch (err) {
 		next(err);
@@ -175,8 +227,27 @@ app.post("/tasks", async (req, res, next) => {
 		const data = await tasks.insert(safeTaskAttributes({
 			progress:0, parent:0, text:"New Task"
 		}, req.body));
+
+		const mode = req.body.mode;
+		const parent = req.body.parent;
+		setPosition(data.id, mode, parent);
+
 		res.send({ id: fixID(data).id });
 	} catch(err){
+		next(err);
+	}
+});
+
+app.put("/tasks/:id/position", async (req, res, next) => {
+	try {
+		const id = req.params.id;
+		const target = req.body.target;
+		const parent = req.body.parent;
+		const mode = req.body.mode;
+		sendMoveQuery(id, mode, target, parent)
+
+		res.send({ id });
+	} catch (err) {
 		next(err);
 	}
 });
