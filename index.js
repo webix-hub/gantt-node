@@ -138,6 +138,7 @@ async function setPosition(id, mode, parent){
 		const relatedPosition = await getPosition(parent);
 		await tasks.update({ _id: id }, { position: relatedPosition });
 	} else if (mode === "first" || mode === "") {
+		const relatedPosition = await getPosition(parent);
 		await tasks.update({ $and:[ { parent: parent }, { _id: { $ne: id } } ]}, { $set:{ position: relatedPosition } });
 	} else throw("not supported position mode");
 }
